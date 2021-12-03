@@ -17,24 +17,62 @@ object Solver {
     g * e
   }
 
-  def getByCriteria(criteria : List[Int]) : List[Int] = {
+  def getoxygen() : List[Int] = {
     var filtered = grid
-    var tempRes = grid.head
-    for (i <- criteria.indices) {
-      filtered = filtered.filter(_ (i) == criteria(i))
+    var tempRes = filtered.head
+    var i = 0
+    var common = getCommonBit(0, filtered)
+    while (filtered.size > 1) {
+      filtered = filtered.filter(_ (i) == common)
       if(filtered.isEmpty) {
         return tempRes
       }
       tempRes = filtered.head
+      i += 1
+      common = getCommonBit(i, filtered)
     }
     tempRes
   }
 
+
+  def getco2() : List[Int] = {
+    var filtered = grid
+    var tempRes = filtered.head
+    var i = 0
+    var common = getUncommonBit(0, filtered)
+    while (filtered.size > 1) {
+      filtered = filtered.filter(_ (i) == common)
+      if(filtered.isEmpty) {
+        return tempRes
+      }
+      tempRes = filtered.head
+      i += 1
+      common = getUncommonBit(i, filtered)
+    }
+    tempRes
+  }
+
+  def getCommonBit(i : Int, grid:List[List[Int]]): Int = {
+    val c = grid.foldLeft(0)((a: Int, b: List[Int]) => a + b(i))
+    val diff = grid.size - c
+    println(diff)
+    println(c)
+    if (c > grid.size / 2) {1} else {0}
+  }
+
+  def getUncommonBit(i : Int, grid:List[List[Int]]): Int = {
+    val c = grid.foldLeft(0)((a: Int, b: List[Int]) => a + b(i))
+    if (c <= grid.size / 2) {1} else {0}
+  }
+
   def task2(): Int = {
-    val oCriteria = bitCount.map((bits:Int) => if (bits >= noOfLines / 2) {1} else {0})
-    val cCriteria = bitCount.map((bits:Int) => if (bits > noOfLines / 2) {0} else {1})
-    val o = getByCriteria(oCriteria)
-    val c = getByCriteria(cCriteria)
+
+    val o = getoxygen()
+    println(o)
+
+    val c = getco2()
+    println(c)
+
     val oN = o.foldLeft(0)((acc:Int, curr:Int) => acc * 2 + curr)
     val cN = c.foldLeft(0)((acc:Int, curr:Int) => acc * 2 + curr)
     oN*cN
